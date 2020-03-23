@@ -1,0 +1,6 @@
+*~
+hw3.pdf
+*.aux
+*.log
+*.out
+__pycache__
