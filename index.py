@@ -1,5 +1,7 @@
 from document import *
-
+from nltk import *
+from nltk.corpus import stopwords
+import math
 
 class Index:
     """An inverted index."""
@@ -13,7 +15,8 @@ class Index:
         Returns:
         None.
         """
-        pass
+        self._dict = {}
+        self._total_documents = 0
 
     def add_doc(self, doc: Document) -> None:
         """Adds doc to the index.
@@ -25,7 +28,14 @@ class Index:
         Returns:
         None.
         """
-        pass
+        self._total_documents += 1
+        # adding words to index
+        for word, loc in doc.words():
+            simplified_word = index_preprocess(word)
+            if simplified_word not in self._dict.keys():
+                self._dict[simplified_word] = [doc] # including the word along with doc_id term frequency
+            else:
+                self._dict[simplified_word] = self._dict[simplified_word] + [doc]
 
     def query(self, query_string: str) -> [(str, float)]:
         """Returns a ranked list of document IDs from the index and their TF-IDF score
@@ -40,8 +50,24 @@ class Index:
         the corresponding document with query_string. The list is sorted in
         order to decreasding similarity.
         """
-        pass
-
+        # function for sorting
+        def doc_id_sort(tuples):
+            return tuples[1]
+        # adding documents which are relevant
+        doc_lst = []
+        final_lst = []
+        query_lst = query_tokenize(query_string)
+        for term in query_lst:
+            if term in self._dict.keys():
+                for doc in self._dict[term]:
+                    if doc.doc_id in doc_lst:
+                        doc_index = doc_lst.index(doc.doc_id)
+                        final_lst[doc_index] = (final_lst[doc_index][0], (final_lst[doc_index][1] + ((len(doc._words[term]) / len(doc._words)) * (math.log(self._total_documents / len(self._dict[term]))))))
+                    else:
+                        doc_lst.append(doc.doc_id)
+                        final_lst.append((doc.doc_id, ((len(doc._words[term]) / len(doc._words)) * (math.log(self._total_documents / len(self._dict[term]))))))
+        final_lst.sort(key=doc_id_sort, reverse=True)
+        return (final_lst)
 # ------------------------- Helpers -------------------------
 
 
@@ -49,7 +75,7 @@ def index_preprocess(word: str) -> str:
     """Returns a processed version of word appropriate for adding to the index.
 
     Implement as you wish. The default returns word as is.
-
+   
     Args:
     - word: the potential word to be processed for indexing.
 
