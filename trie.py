@@ -93,7 +93,7 @@ def add_word(node: TrieNode, word: str, locs: [Location]) -> None:
     None.
     """
     Trie = node.children
-    word = word.strip("\n")
+    #word = word.strip("\n")
     for i in word:
         if i not in Trie:  #checking if the key already exists or not
             Trie[i] = {}
