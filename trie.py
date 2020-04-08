@@ -44,6 +44,7 @@ class Trie:
         words = prefix_tokenize(words)
         matches = []
         for w in words:
+            #w = prefix_preprocess(w)
             matches.extend(match(self._root, w, w))
         return matches
 
@@ -61,7 +62,7 @@ def trie_preprocess(word: str) -> str:
     Returns:
     An appropriately processed version of word.
     """
-    return (word.strip("\n"))
+    return word
 
 
 def prefix_tokenize(prefix_string: str):
@@ -92,6 +93,7 @@ def add_word(node: TrieNode, word: str, locs: [Location]) -> None:
     None.
     """
     Trie = node.children
+    word = word.strip("\n")
     for i in word:
         if i not in Trie:  #checking if the key already exists or not
             Trie[i] = {}
@@ -101,18 +103,21 @@ def add_word(node: TrieNode, word: str, locs: [Location]) -> None:
     
     Trie['^'] = locs #adding the last alphabet with the location
     
-def dfs(Trie: dict, word: str, lst=[]) -> [(str, [Location])]:
-    for key, value in Trie.items():
-        if key  == '^':
-            #if terminator letter is encountered, we have a word that satisfies our prefix
-            lst.append((word, value))
-        else:
-            #if terminator not encountered, we append the next key
-            word = word + key
-            dfs(value, word, lst)
-    return lst
+def search(node: TrieNode, prefix: str) -> TrieNode:
+    for i in prefix:
+        if i in node.children:
+            node.children = node.children[i]
+    return node
 
-   
+
+def dfs(root: dict, word: str, final=[]) -> [(str, [Location])]:
+    for a, n in root.items():
+        if a == TERMINATOR:
+            final.append((word, n))
+        else:
+            dfs(n, word+a, final)
+    return final
+
 
 def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
     """Returns prefix-matching words starting at node and the document locations
@@ -131,16 +136,12 @@ def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
     Returns:
     List of pairs where each pair contains a prefix-matched word and the
     locations where the word appears.
+
     """
-    Trie = node.children
-    for p in prefix:  #checking if the prefix exists or not
-        if p in Trie.keys():
-            Trie = Trie[p]
-    
-    word = prefix  #if prefix exists, then we start put dfs from prefix
-    return (dfs(Trie, word))
-    
 
-
+    node = search(node, prefix)
+    word = prefix
+    return(dfs(node.children, word))
+    
 
 
