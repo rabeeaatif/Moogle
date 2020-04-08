@@ -64,5 +64,6 @@ Please use the following avenues:
 - talk to course staff in their desginated hours
 
 ## Refinement
-- Removed punctuation marks, new lines and non alpha-numeric characters in document_tokenize() and query_tokenize()
-- Removed stop words in document_tokenize() and query_tokenize().
+- Removed punctuation marks, new lines and non alpha-numeric characters in document_tokenize(), prefix_tokenize() and query_tokenize()  to avoid wastage of storage.
+- Removed stop words in document_tokenize(), query_tokenize() and prefix_tokenize() to avoid wastage of storage.
+- Performed stemming operation in document_tokenize(), query_tokenize() and prefix_tokenize() to avoid data redundancy.
