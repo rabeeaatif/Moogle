@@ -27,7 +27,8 @@ class Trie:
         """
         for w, locs in doc.words():
             add_word(self._root, trie_preprocess(w), locs)
-
+        
+        
     def complete(self, words: str) -> [(str, [Location])]:
         """Returns prefix-matches in the trie to each of the words and their locations
         in their documents.
@@ -43,6 +44,7 @@ class Trie:
         words = prefix_tokenize(words)
         matches = []
         for w in words:
+            #w = prefix_preprocess(w)
             matches.extend(match(self._root, w, w))
         return matches
 
@@ -90,7 +92,30 @@ def add_word(node: TrieNode, word: str, locs: [Location]) -> None:
     Returns:
     None.
     """
-    pass
+    Trie = node.children
+    word = word.strip("\n")
+    for i in word:
+        if i not in Trie:  #checking if the key already exists or not
+            Trie[i] = {}
+            Trie = Trie[i]
+        else:
+            Trie = Trie[i]
+    
+    Trie['^'] = locs #adding the last alphabet with the location
+    
+def dfs(Trie: dict, word: str, lst=[]) -> [(str, [Location])]:
+    for key, value in Trie.items():
+        if key  == '^':
+            #if terminator letter is encountered, we have a word that satisfies our prefix
+            lst.append((word, value))
+        else:
+            #if terminator not encountered, we append the next key
+            word = word + key
+            dfs(value, word, lst)
+    print(lst)
+    return lst
+
+   
 
 def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
     """Returns prefix-matching words starting at node and the document locations
@@ -110,4 +135,15 @@ def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
     List of pairs where each pair contains a prefix-matched word and the
     locations where the word appears.
     """
-    pass
+    Trie = node.children
+    for p in prefix:  #checking if the prefix exists or not
+        if p in Trie.keys():
+            Trie = Trie[p]
+    
+    word = prefix  #if prefix exists, then we start put dfs from prefix
+    dfs(Trie, word)
+    
+
+
+
+
