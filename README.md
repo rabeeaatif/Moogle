@@ -63,4 +63,6 @@ Please use the following avenues:
 - discuss with your peers
 - talk to course staff in their desginated hours
 
-
+## Refinement
+- Removed punctuation marks, new lines and non alpha-numeric characters in document_tokenize() and query_tokenize()
+- Removed stop words in document_tokenize() and query_tokenize().

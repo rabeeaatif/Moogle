@@ -1,5 +1,6 @@
 from document import *
 from trie import *
+from index import *
 
 
 class Corpus:
@@ -30,13 +31,13 @@ class Corpus:
                 print(f'Building Corpus: Read {i:5} documents.')
             doc = Document(doc)
             self._index.add_doc(doc)
-            self._trie.add_doc(doc)
-        print(f'Built corpus from {i} documents.')
+            # self._trie.add_doc(doc)
+            print(f'Built corpus from {i} documents.')
 
     def search(self, query: str) -> [(str, float)]:
         """Returns a list of the top 100 contained documents ranked by relevance to
         query.
-
+ 
         Each pair in the returned list contains a document ID and the matching
         score of the corresponding document to the query.
 

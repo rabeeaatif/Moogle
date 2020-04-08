@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import pathlib
-
+from nltk import *
+from nltk.corpus import stopwords
 
 @dataclass
 class Location:
@@ -77,8 +78,14 @@ def document_tokenize(content: str) -> {str: [(int, int)]}:
         stop = content.find(' ', i)
         if stop == -1:
             stop = len(content)
-        word = content[start:stop]
+        word = content[start:stop].lower()
+        # using ntlk to tokenize and stem words
+        stop_words = set(stopwords.words('english'))
+        # tokenization
+        word_tokenized = word_tokenize(word)
         # Save index bounds of word, proceed with the remaining content.
-        words[word] = words.get(word, []) + [(start, stop)]
+        for word in word_tokenized:
+            if not word in stop_words and word.isalnum():
+                words[word] = words.get(word, []) + [(start, stop)]
         i = stop + 1
     return words

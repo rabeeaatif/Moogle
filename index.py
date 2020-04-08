@@ -32,10 +32,11 @@ class Index:
         # adding words to index
         for word, loc in doc.words():
             simplified_word = index_preprocess(word)
-            if simplified_word not in self._dict.keys():
-                self._dict[simplified_word] = [doc] # including the word along with doc_id term frequency
-            else:
-                self._dict[simplified_word] = self._dict[simplified_word] + [doc]
+            if len(simplified_word) != 0:
+                if simplified_word not in self._dict.keys():
+                    self._dict[simplified_word] = [doc] # including the word along with doc_id term frequency
+                else:
+                    self._dict[simplified_word] = self._dict[simplified_word] + [doc]
 
     def query(self, query_string: str) -> [(str, float)]:
         """Returns a ranked list of document IDs from the index and their TF-IDF score
@@ -62,12 +63,13 @@ class Index:
                 for doc in self._dict[term]:
                     if doc.doc_id in doc_lst:
                         doc_index = doc_lst.index(doc.doc_id)
-                        final_lst[doc_index] = (final_lst[doc_index][0], (final_lst[doc_index][1] + ((len(doc._words[term]) / len(doc._words)) * (math.log(self._total_documents / len(self._dict[term]))))))
+                        final_lst[doc_index] = (final_lst[doc_index][0], (final_lst[doc_index][1] + ((len(doc._words[term]) / len(doc._words)) * math.log(self._total_documents / len(self._dict[term])))))
                     else:
                         doc_lst.append(doc.doc_id)
-                        final_lst.append((doc.doc_id, ((len(doc._words[term]) / len(doc._words)) * (math.log(self._total_documents / len(self._dict[term]))))))
-        final_lst.sort(key=doc_id_sort, reverse=True)
+                        final_lst.append((doc.doc_id, ((len(doc._words[term]) / len(doc._words)) * math.log(self._total_documents / len(self._dict[term])))))
+        final_lst.sort(key=doc_id_sort)
         return (final_lst)
+ 
 # ------------------------- Helpers -------------------------
 
 
@@ -97,4 +99,10 @@ def query_tokenize(query_string: str):
     Returns:
     A list of query tokens appropriate for querying the index.
     """
-    return query_string.split()
+    # using ntlk to tokenize and stem query words
+    stop_words = set(stopwords.words('english'))
+    # tokenization
+    words = word_tokenize(query_string)
+    words_lowered = [word_.lower() for word_ in words]
+    words_tokenized = [word_ for word_ in words_lowered if not word_ in stop_words and word_.isalnum()]
+    return words_tokenized
