@@ -1,6 +1,4 @@
 from document import *
-from nltk import *
-from nltk.corpus import stopwords
 import math
 
 class Index:
