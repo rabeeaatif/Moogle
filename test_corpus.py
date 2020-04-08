@@ -124,3 +124,4 @@ def test_trie():
                     f'For {word}, mismatch in boundaries at postiion {i+1} '\
                     f'between result documents:\n{res_locs}\n '\
                     f'and reference documents:\n{ref_locs}'
+
