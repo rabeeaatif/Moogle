@@ -112,7 +112,7 @@ def dfs(Trie: dict, word: str, lst=[]) -> [(str, [Location])]:
             #if terminator not encountered, we append the next key
             word = word + key
             dfs(value, word, lst)
-    print(lst)
+    
     return lst
 
    
