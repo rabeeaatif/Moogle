@@ -44,7 +44,6 @@ class Trie:
         words = prefix_tokenize(words)
         matches = []
         for w in words:
-            #w = prefix_preprocess(w)
             matches.extend(match(self._root, w, w))
         return matches
 
@@ -62,7 +61,7 @@ def trie_preprocess(word: str) -> str:
     Returns:
     An appropriately processed version of word.
     """
-    return word
+    return (word.strip("\n"))
 
 
 def prefix_tokenize(prefix_string: str):
@@ -93,7 +92,6 @@ def add_word(node: TrieNode, word: str, locs: [Location]) -> None:
     None.
     """
     Trie = node.children
-    word = word.strip("\n")
     for i in word:
         if i not in Trie:  #checking if the key already exists or not
             Trie[i] = {}
@@ -112,7 +110,6 @@ def dfs(Trie: dict, word: str, lst=[]) -> [(str, [Location])]:
             #if terminator not encountered, we append the next key
             word = word + key
             dfs(value, word, lst)
-    
     return lst
 
    
@@ -141,7 +138,7 @@ def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
             Trie = Trie[p]
     
     word = prefix  #if prefix exists, then we start put dfs from prefix
-    return(dfs(Trie, word))
+    return (dfs(Trie, word))
     
 
 
