@@ -1,6 +1,7 @@
 from document import *
 from nltk import *
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 import math
 
 class Index:
@@ -104,5 +105,8 @@ def query_tokenize(query_string: str):
     # tokenization
     words = word_tokenize(query_string)
     words_lowered = [word_.lower() for word_ in words]
+    # checking for stop and alpha numeric words
     words_tokenized = [word_ for word_ in words_lowered if not word_ in stop_words and word_.isalnum()]
-    return words_tokenized
+    # stemming
+    words_stemmed = [PorterStemmer().stem(word_) for word_ in words_tokenized]
+    return words_stemmed

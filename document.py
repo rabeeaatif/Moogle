@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import pathlib
 from nltk import *
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 
 @dataclass
 class Location:
@@ -83,9 +84,11 @@ def document_tokenize(content: str) -> {str: [(int, int)]}:
         stop_words = set(stopwords.words('english'))
         # tokenization
         word_tokenized = word_tokenize(word)
+        # stemming
+        words_stemmed = [PorterStemmer().stem(word_) for word_ in word_tokenized]
         # Save index bounds of word, proceed with the remaining content.
-        for word in word_tokenized:
-            if not word in stop_words and word.isalnum():
+        for word in words_stemmed:
+            if not word in stop_words and word.isalnum(): # checking for stop and alpha numeric words
                 words[word] = words.get(word, []) + [(start, stop)]
         i = stop + 1
     return words
