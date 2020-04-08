@@ -103,21 +103,19 @@ def add_word(node: TrieNode, word: str, locs: [Location]) -> None:
     
     Trie['^'] = locs #adding the last alphabet with the location
     
-def search(node: TrieNode, prefix: str) -> TrieNode:
-    for i in prefix:
-        if i in node.children:
-            node.children = node.children[i]
-    return node
-
-
-def dfs(root: dict, word: str, final=[]) -> [(str, [Location])]:
-    for a, n in root.items():
-        if a == TERMINATOR:
-            final.append((word, n))
+def dfs(Trie: dict, word: str, lst=[]) -> [(str, [Location])]:
+    for key, value in Trie.items():
+        if key  == '^':
+            #if terminator letter is encountered, we have a word that satisfies our prefix
+            lst.append((word, value))
         else:
-            dfs(n, word+a, final)
-    return final
+            #if terminator not encountered, we append the next key
+            word = word + key
+            dfs(value, word, lst)
+    
+    return lst
 
+   
 
 def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
     """Returns prefix-matching words starting at node and the document locations
@@ -136,12 +134,14 @@ def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
     Returns:
     List of pairs where each pair contains a prefix-matched word and the
     locations where the word appears.
-
     """
-
-    node = search(node, prefix)
-    word = prefix
-    return(dfs(node.children, word))
+    Trie = node.children
+    for p in prefix:  #checking if the prefix exists or not
+        if p in Trie.keys():
+            Trie = Trie[p]
+    
+    word = prefix  #if prefix exists, then we start put dfs from prefix
+    return(dfs(Trie, word))
     
 
 
