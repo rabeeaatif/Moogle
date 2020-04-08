@@ -1,5 +1,8 @@
 from document import *
 from dataclasses import dataclass, field
+from nltk import *
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 
 TERMINATOR: str = '^'
 
@@ -27,7 +30,8 @@ class Trie:
         """
         for w, locs in doc.words():
             add_word(self._root, trie_preprocess(w), locs)
-
+        
+        
     def complete(self, words: str) -> [(str, [Location])]:
         """Returns prefix-matches in the trie to each of the words and their locations
         in their documents.
@@ -43,7 +47,6 @@ class Trie:
         words = prefix_tokenize(words)
         matches = []
         for w in words:
-            w = prefix_preprocess(w)
             matches.extend(match(self._root, w, w))
         return matches
 
@@ -61,7 +64,7 @@ def trie_preprocess(word: str) -> str:
     Returns:
     An appropriately processed version of word.
     """
-    return word
+    return (word.strip("\n"))
 
 
 def prefix_tokenize(prefix_string: str):
@@ -76,7 +79,16 @@ def prefix_tokenize(prefix_string: str):
     Returns:
     A list of prefix tokens appropriate for querying the index.
     """
-    return prefix_string.split()
+    # using ntlk to tokenize and stem query words
+    stop_words = set(stopwords.words('english'))
+    # tokenization
+    words = word_tokenize(prefix_string)
+    words_lowered = [word_.lower() for word_ in words]
+    # checking for stop and alpha numeric words
+    words_tokenized = [word_ for word_ in words_lowered if not word_ in stop_words and word_.isalnum()]
+    # stemming
+    words_stemmed = [PorterStemmer().stem(word_) for word_ in words_tokenized]
+    return words_stemmed
 
 
 def add_word(node: TrieNode, word: str, locs: [Location]) -> None:
@@ -91,7 +103,28 @@ def add_word(node: TrieNode, word: str, locs: [Location]) -> None:
     Returns:
     None.
     """
-    pass
+    Trie = node.children
+    for i in word:
+        if i not in Trie:  #checking if the key already exists or not
+            Trie[i] = {}
+            Trie = Trie[i]
+        else:
+            Trie = Trie[i]
+    
+    Trie['^'] = locs #adding the last alphabet with the location
+    
+def dfs(Trie: dict, word: str, lst=[]) -> [(str, [Location])]:
+    for key, value in Trie.items():
+        if key  == '^':
+            #if terminator letter is encountered, we have a word that satisfies our prefix
+            lst.append((word, value))
+        else:
+            #if terminator not encountered, we append the next key
+            word = word + key
+            dfs(value, word, lst)
+    return lst
+
+   
 
 def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
     """Returns prefix-matching words starting at node and the document locations
@@ -111,4 +144,15 @@ def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
     List of pairs where each pair contains a prefix-matched word and the
     locations where the word appears.
     """
-    pass
+    Trie = node.children
+    for p in prefix:  #checking if the prefix exists or not
+        if p in Trie.keys():
+            Trie = Trie[p]
+    
+    word = prefix  #if prefix exists, then we start put dfs from prefix
+    return (dfs(Trie, word))
+    
+
+
+
+
