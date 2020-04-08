@@ -141,7 +141,7 @@ def match(node: TrieNode, prefix: str, trace: str) -> [(str, [Location])]:
             Trie = Trie[p]
     
     word = prefix  #if prefix exists, then we start put dfs from prefix
-    dfs(Trie, word)
+    return(dfs(Trie, word))
     
 
 
