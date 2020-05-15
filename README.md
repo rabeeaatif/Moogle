@@ -29,10 +29,6 @@ The problems are in `hw4.tex` which is to be compiled using a LaTeX compiler.
 Based on feedback from the last set of students that attempted this assignment, the number of hours that your team will require to complete this homework are as follows.
 - _data unavailable_
 
-## Grading
-
-Grading will be as per the criteria specified in the accompanying file, _rubric.csv_.
-
 ## Submission
 
 There are 3 parts to this assignment. Lack of submission of any part will result in a loss of marks.
@@ -49,11 +45,6 @@ You have to provide feedback on your team and on the assignment by filling the f
 
 Deadline: 1845h on Mon, 6 April
 
-### 4.3 Peer Review
-
-You will review 2 submissions which will be shared with you through [LMS -> Drop Box](https://lms.habib.edu.pk/x/4MonbN). The peer review rubric will be shared through [LMS -> Assignments](https://lms.habib.edu.pk/x/x0KvOt) where the review will have to be submitted.
-
-Deadline: 1830h on Wed, 8 April
 
 ## Discussion
 
